@@ -1,7 +1,6 @@
 from models.manager import Manager
 from views.view import MainWindow
 from models.resultshandler import ResultsHandler
-from controllers.dataiter import DataIter
 
 
 class MainController():
