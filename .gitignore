@@ -31,3 +31,4 @@ models/hsv_filter/camera_1/hsv_filter_plate_white.pkl
 
 models/bg_model/bg.png
 models/background_extractor.py
+controllers/dataiter.py
