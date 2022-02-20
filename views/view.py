@@ -2,8 +2,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QRect, Qt
 from PyQt5.QtGui import QFontDatabase
-#import cv2 NOTE problemas com QT
-#built-in libraries
 import sys
 
 from scipy.optimize.optimize import main
@@ -67,9 +65,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.textWidget = QtWidgets.QWidget()
         self.textWidget.setLayout(self.textLayout)
 
-        self.countWidget = QtWidgets.QLabel(f"Contagem:\n\n 0")
+        self.countWidget = QtWidgets.QLabel(f"Contagem\n\n 0")
         self.countWidget.setStyleSheet('font-family: \"Aldrich\"; font-size: 18pt')
-        self.countWidget.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.countWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.textLayout.addWidget(self.countWidget)
 
@@ -91,7 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graphicsView.fitInView(pixmapItem, Qt.KeepAspectRatio)
     
     def refresh_text(self, value: list):
-        self.countWidget.setText(f"Contagem:\n\n {value}")
+        self.countWidget.setText(f"Contagem\n\n {value}")
 
 if __name__ == "__main__":
 

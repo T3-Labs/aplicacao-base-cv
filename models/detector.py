@@ -1,5 +1,5 @@
 #External
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
 import numpy as np
 from dotenv import load_dotenv, find_dotenv
@@ -7,11 +7,13 @@ from dotenv import load_dotenv, find_dotenv
 import os
 from pathlib import Path
 from time import time
+from queue import Queue
+
 
 
 class Detector(QThread):
-
-    def __init__(self, frameQueue, resultQueue) -> None:
+    sendInferences = pyqtSignal(object)
+    def __init__(self) -> None:
         super().__init__()
         load_dotenv(find_dotenv())
         weights = os.getenv("WEIGHTS_PATH")
@@ -23,8 +25,8 @@ class Detector(QThread):
         self.layers_names = self._get_layers_names()
         self.conf_threshold = 0.5
         self.nms_threshold = 0.4
-        self.frameQueue = frameQueue
-        self.resultQueue = resultQueue
+
+        self.frameQueue = Queue(5)
 
     @staticmethod
     def _load_labels(labels_path: str):
@@ -80,18 +82,23 @@ class Detector(QThread):
             for i in indices:
                 box = boxes[i]
                 detections.append((box, confidences[i], self.labels[0]))
-        return detections, inputs
+        return detections
 
 
     def run(self):
         while not self.isInterruptionRequested():
-            if self.frameQueue.get_size()>0:
-                item = self.frameQueue.cat()
+            if not self.frameQueue.empty():
+                item = self.frameQueue.get()
                 results = self.inference(item)
-                self.resultQueue.collect(results)    
+                self.sendInferences.emit([results, item])    
             else:
-                pass
+                self.yieldCurrentThread
     
+
+    def receiveFrame(self, frame):
+        if frame is not None:
+            self.frameQueue.put(frame)
+
     def __del__(self):
         self.requestInterruption()
         self.wait()

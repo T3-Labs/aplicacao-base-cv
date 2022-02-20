@@ -2,14 +2,15 @@ import cv2
 
 from PyQt5.QtCore import QThread
 from time import sleep
+from PyQt5 import QtCore
 
 
 class Camera(QThread):
+    sendFrame = QtCore.pyqtSignal(object)
 
-    def __init__(self, video_path, frameQueue) -> None:
+    def __init__(self, video_path) -> None:
         super().__init__()
         self.video_path = video_path
-        self.frameQueue = frameQueue
 
     def video(self, video_path):
         cap = cv2.VideoCapture(video_path)
@@ -31,10 +32,7 @@ class Camera(QThread):
         while(cap.isOpened() and self.isInterruptionRequested() is not True):
             ret, frame = cap.read()
             if frame is not None:
-                self.frameQueue.collect(frame)
-            else:
-                pass
-
+                self.sendFrame.emit(frame)
             sleep(1/fps)
         cap.release()
 

@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5 import QtCore
 import sys
 import numpy as np
@@ -6,14 +6,15 @@ import cv2
 from models.drawner import Drawner
 from models.tracker import Tracker
 from shapely.geometry import LineString
-
+from queue import Queue
 
 class PostProcess(QThread):
 
-    def __init__(self, inferenceQueue, resultsQueue) -> None:
+    sendFrame = pyqtSignal(object)
+    sendCount = pyqtSignal(int)
+
+    def __init__(self) -> None:
         super().__init__()
-        self.inferenceQueue = inferenceQueue
-        self.resultsQueue = resultsQueue
         self.tracker = Tracker(3, 1, 30)
         self.count_objs = 0
         self.colors = [
@@ -21,7 +22,7 @@ class PostProcess(QThread):
                         (255, 255, 0),(0, 255, 255), (255, 0, 255),
                         (255, 127, 255),(127, 0, 255), (127, 0, 127)
                         ]
-
+        self.inferenceQueue = Queue(5)
 
     @staticmethod
     def _extract_roi_coords(bbox: tuple)-> np.array:
@@ -142,19 +143,27 @@ class PostProcess(QThread):
         return frame
 
 
+    def receiveInferences(self, inferences):
+        if inferences is not None:
+            self.inferenceQueue.put(inferences)
+
     def run(self):
         frameCounter = 0
         while not self.isInterruptionRequested():
-            if self.inferenceQueue.get_size()>0:
-                results, frame = self.inferenceQueue.cat()
+            if self.inferenceQueue.qsize()>0:
+                results, frame = self.inferenceQueue.get()
                 centroIDS = self.centroid(results)
                 img = frame.copy()
                 if centroIDS:
                     if frameCounter % 2 == 0:
                         self.tracker.Update(centroIDS)
                 img = self.tracker_obj(frame, self.tracker, self.colors)
-                self.resultsQueue.collect([img, self.count_objs])
-            
+                self.sendFrame.emit(img)
+                self.sendCount.emit(self.count_objs)
+            else:
+                self.yieldCurrentThread()
+
+
 
     def __del__(self):
         self.requestInterruption()

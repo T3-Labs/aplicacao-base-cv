@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QThread
 from PyQt5 import QtCore
+from queue import Queue
 
 
 class ResultsHandler(QThread):
@@ -8,9 +9,9 @@ class ResultsHandler(QThread):
     sendValuesToView = QtCore.pyqtSignal(object)
     sendValuesToDataIter = QtCore.pyqtSignal(object)
 
-    def __init__(self, resultsQueue):
+    def __init__(self):
         super().__init__()
-        self.resultsQueue = resultsQueue
+        self.resultsQueue = Queue(5)
     
     def run(self):
         while not self.isInterruptionRequested():
