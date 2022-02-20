@@ -22,7 +22,7 @@ class PostProcess(QThread):
                         (255, 255, 0),(0, 255, 255), (255, 0, 255),
                         (255, 127, 255),(127, 0, 255), (127, 0, 127)
                         ]
-        self.inferenceQueue = Queue(5)
+        self.inferenceQueue = Queue(1)
 
     @staticmethod
     def _extract_roi_coords(bbox: tuple)-> np.array:

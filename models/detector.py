@@ -26,7 +26,7 @@ class Detector(QThread):
         self.conf_threshold = 0.5
         self.nms_threshold = 0.4
 
-        self.frameQueue = Queue(5)
+        self.frameQueue = Queue(1)
 
     @staticmethod
     def _load_labels(labels_path: str):
@@ -92,7 +92,7 @@ class Detector(QThread):
                 results = self.inference(item)
                 self.sendInferences.emit([results, item])    
             else:
-                self.yieldCurrentThread
+                self.yieldCurrentThread()
     
 
     def receiveFrame(self, frame):
