@@ -66,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.textWidget = QtWidgets.QWidget()
         self.textWidget.setLayout(self.textLayout)
 
-        self.countWidget = QtWidgets.QLabel(f"Contagem\n\n 0")
+        self.countWidget = QtWidgets.QLabel(f"Contagem\n\n0")
         self.countWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.textLayout.addWidget(self.countWidget)
@@ -89,7 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graphicsView.fitInView(pixmapItem, Qt.KeepAspectRatio)
     
     def refresh_text(self, value: list):
-        self.countWidget.setText(f"Contagem\n\n {value}")
+        self.countWidget.setText(f"Contagem\n\n{value}")
 
 if __name__ == "__main__":
 
