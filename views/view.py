@@ -1,6 +1,7 @@
 #external libraries
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QRect, Qt
+from PyQt5.QtGui import QFontDatabase
 #import cv2 NOTE problemas com QT
 #built-in libraries
 import sys
@@ -14,7 +15,8 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def __init__(self) -> None:
         super().__init__()
-        title = "T3 Labs - Métricas de Produtividade"
+        QFontDatabase.addApplicationFont("./settings/font/Aldrich-Regular.ttf")
+        title = "Detector de objetos - DEMO"
         self.setWindowTitle(title)
         mainLayout = QtWidgets.QVBoxLayout()
     
@@ -29,21 +31,31 @@ class MainWindow(QtWidgets.QMainWindow):
 
         mainLayout.addWidget(headerWidget)
         mainLayout.addWidget(bodyWidget)
-
-        qiconImage = QtGui.QImage("./views/resized_logo.png")
+        
+        qiconImage = QtGui.QImage("./views/logo.png")
         iconWidget = QtWidgets.QLabel()
         iconWidget.setPixmap(QtGui.QPixmap.fromImage(qiconImage))
-        
-        qiconImage2 = QtGui.QImage("./views/logo_fonte_preta.png")
-        iconWidget2 = QtWidgets.QLabel()
-        iconWidget2.setPixmap(QtGui.QPixmap.fromImage(qiconImage2))
 
         titleWidget = QtWidgets.QLabel(title)
-        titleWidget.setStyleSheet('font-family: \"DejaVu Sans\"; font-size: 24pt')
+        titleWidget.setStyleSheet('font-family: \"Aldrich\"; font-size: 24pt')
 
         self.headerLayout.addWidget(iconWidget, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.headerLayout.addItem(QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
+        line = QtWidgets.QFrame()
+        line.setFrameShape(QtWidgets.QFrame.VLine)
+        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.headerLayout.addWidget(line)
+        self.headerLayout.addItem(QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
         self.headerLayout.addWidget(titleWidget, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.headerLayout.addWidget(iconWidget2, alignment=Qt.AlignmentFlag.AlignRight)
+        self.headerLayout.addItem(QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum))
+        
+        line = QtWidgets.QFrame()
+        line.setFrameShape(QtWidgets.QFrame.VLine)
+        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.headerLayout.addWidget(line)
+        self.headerLayout.addItem(QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
+
+        
 
         self.graphicsView = QtWidgets.QGraphicsView()
         self.scene = QtWidgets.QGraphicsScene()
@@ -56,22 +68,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.textWidget.setLayout(self.textLayout)
 
         self.countWidget = QtWidgets.QLabel(f"Contagem:\n\n 0")
-        self.countWidget.setStyleSheet('font-family: \"DejaVu Sans\"; font-size: 18pt')
+        self.countWidget.setStyleSheet('font-family: \"Aldrich\"; font-size: 18pt')
         self.countWidget.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-        self.areaWidget = QtWidgets.QLabel("Área Total Produzida:")
-        self.areaWidget.setStyleSheet('font-family: \"DejaVu Sans\"; font-size: 18pt')
-        self.areaWidget.setAlignment(Qt.AlignmentFlag.AlignTop)
-
-        self.produtivityWidget = QtWidgets.QLabel("Area Útil:\n\n 30m²")
-        self.produtivityWidget.setStyleSheet('font-family: \"DejaVu Sans\"; font-size: 18pt')
-        self.produtivityWidget.setAlignment(Qt.AlignmentFlag.AlignTop)
-
         self.textLayout.addWidget(self.countWidget)
-        self.textLayout.addWidget(self.areaWidget)
-        self.textLayout.addWidget(self.produtivityWidget)
 
-        self.bodyLayout.addWidget(self.textWidget, 0, 1)
+        self.headerLayout.addWidget(self.textWidget)
     
         widget = QtWidgets.QWidget()
         widget.setLayout(mainLayout)

@@ -1,7 +1,4 @@
-
-matplotlib
 python-dotenv
-pypylon
 numpy==1.17.4
 scipy==1.7.1
 opencv-contrib-python==4.5.5.62

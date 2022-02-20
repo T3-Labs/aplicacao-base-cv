@@ -8,9 +8,9 @@ from models.postprocess import PostProcess
 class Manager():
 
     def __init__(self, video_path) -> NoReturn:
-        self.frameQueue = QMQT(buffer = 5)
-        self.inferenceQueue = QMQT(buffer = 5)
-        self.resultsQueue = QMQT(buffer = 5)
+        self.frameQueue = QMQT(buffer = 1)
+        self.inferenceQueue = QMQT(buffer = 1)
+        self.resultsQueue = QMQT(buffer = 1)
         self.cam = Camera(video_path, self.frameQueue)
         self.inference = Detector(self.frameQueue, self.inferenceQueue)
         self.postprocess = PostProcess(self.inferenceQueue, self.resultsQueue)
