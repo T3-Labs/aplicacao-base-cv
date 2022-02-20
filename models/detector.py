@@ -81,7 +81,7 @@ class Detector(QThread):
         if len(indices) > 0:
             for i in indices:
                 box = boxes[i]
-                detections.append((box, confidences[i], self.labels[0]))
+                detections.append((box, confidences[i], self.labels[class_ids[i]]))
         return detections
 
 

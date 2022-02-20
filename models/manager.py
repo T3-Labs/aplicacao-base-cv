@@ -5,12 +5,26 @@ from models.detector import Detector
 from models.camera import Camera
 from models.postprocess import PostProcess
 from PyQt5.QtCore import QObject
+from dotenv import load_dotenv, find_dotenv
+import os
 
 class Manager(QObject):
 
-    def __init__(self, video_path) -> NoReturn:
+    def __init__(self) -> NoReturn:
         super().__init__()
-        self.cam = Camera(video_path)
+
+        load_dotenv(find_dotenv())
+        input = os.getenv("INPUT")
+
+        if input is not None:
+            if input.isdigit():
+                input = int(input)
+        else:
+            input = 0
+        
+
+
+        self.cam = Camera(input)
         self.inference = Detector()
         self.postprocess = PostProcess()
 

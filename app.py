@@ -12,7 +12,7 @@ os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
 
 if __name__=='__main__':
     app = PyQt5.QtWidgets.QApplication(sys.argv)
-    controller =  MainController(video_path=0)
+    controller =  MainController()
     controller.run()
     sys.exit(app.exec_())
 

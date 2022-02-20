@@ -6,9 +6,9 @@ from PyQt5.QtCore import QObject
 
 class MainController(QObject):
 
-    def __init__(self, video_path) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.manager = Manager(video_path)
+        self.manager = Manager()
         #self.resultshandler = ResultsHandler()
         self.window = MainWindow()
         self.manager.postprocess.sendFrame.connect(self.window.show_frame)

@@ -89,14 +89,11 @@ class PostProcess(QThread):
         hull = 0
         contours = 0
         threah_roi = 0
-        if results[-1] != "Unknown":
-            for result in results:
-                bbox = result[0]
-                label = result[-1]
-                image = Drawner.draw_bbox(image, bbox, label)
-            return image
-        else:
-            return image
+        for result in results:
+            bbox = result[0]
+            label = result[-1]
+            image = Drawner.draw_bbox(image, bbox, label)
+        return image
 
     @staticmethod
     def extract_points(tracker):
@@ -154,10 +151,13 @@ class PostProcess(QThread):
                 results, frame = self.inferenceQueue.get()
                 centroIDS = self.centroid(results)
                 img = frame.copy()
-                if centroIDS:
-                    if frameCounter % 2 == 0:
-                        self.tracker.Update(centroIDS)
-                img = self.tracker_obj(frame, self.tracker, self.colors)
+                #if centroIDS:
+                #    if frameCounter % 2 == 0:
+                #        self.tracker.Update(centroIDS)
+                #img = self.tracker_obj(frame, self.tracker, self.colors)
+
+                img = self.postprocess(img, results)
+
                 self.sendFrame.emit(img)
                 self.sendCount.emit(self.count_objs)
             else:
