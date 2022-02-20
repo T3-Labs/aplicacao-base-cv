@@ -16,6 +16,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QFontDatabase.addApplicationFont("./settings/font/Aldrich-Regular.ttf")
         title = "Detector de objetos - DEMO"
         self.setWindowTitle(title)
+        self.setStyleSheet("QMainWindow{background-color:#31363b;font-color:#FFFFFF}")
         mainLayout = QtWidgets.QVBoxLayout()
     
         self.headerLayout = QtWidgets.QHBoxLayout()
