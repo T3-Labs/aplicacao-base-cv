@@ -20,8 +20,8 @@ class Detector(QThread):
         cfg = os.getenv("CFG_PATH")
         self.labels = self._load_labels(os.getenv("LABELS_PATH"))
         self.model = cv2.dnn.readNetFromDarknet(str(cfg), str(weights))
-        self.model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
-        self.model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+        self.model.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+        self.model.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
         self.layers_names = self._get_layers_names()
         self.conf_threshold = 0.5
         self.nms_threshold = 0.4
