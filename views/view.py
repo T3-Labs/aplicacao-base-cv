@@ -15,8 +15,8 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         QFontDatabase.addApplicationFont("./settings/font/Aldrich-Regular.ttf")
         title = "Detector de objetos - DEMO"
+        self.setStyleSheet("QMainWindow{background-color:#31363b} QWidget{background-color:#31363b;font-family: \"Aldrich\"; font-size: 18pt; color:#FFFFFF} QGraphicsView{background-color:#232629}")
         self.setWindowTitle(title)
-        self.setStyleSheet("QMainWindow{background-color:#31363b;font-color:#FFFFFF}")
         mainLayout = QtWidgets.QVBoxLayout()
     
         self.headerLayout = QtWidgets.QHBoxLayout()
@@ -36,7 +36,7 @@ class MainWindow(QtWidgets.QMainWindow):
         iconWidget.setPixmap(QtGui.QPixmap.fromImage(qiconImage))
 
         titleWidget = QtWidgets.QLabel(title)
-        titleWidget.setStyleSheet('font-family: \"Aldrich\"; font-size: 24pt')
+        titleWidget.setStyleSheet('font-size: 24pt')
 
         self.headerLayout.addWidget(iconWidget, alignment=Qt.AlignmentFlag.AlignLeft)
         self.headerLayout.addItem(QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
@@ -67,7 +67,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.textWidget.setLayout(self.textLayout)
 
         self.countWidget = QtWidgets.QLabel(f"Contagem\n\n 0")
-        self.countWidget.setStyleSheet('font-family: \"Aldrich\"; font-size: 18pt')
         self.countWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.textLayout.addWidget(self.countWidget)
