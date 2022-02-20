@@ -14,20 +14,17 @@ class ResultsHandler(QThread):
     
     def run(self):
         while not self.isInterruptionRequested():
-            frame, obj_count, measurement = self.resultsQueue.cat()
+            frame, obj_count = self.resultsQueue.cat()
             self.sendFrame.emit(frame)
-            self.sendValuesToView.emit([obj_count, measurement])
-            data = self.make_payload(obj_count, measurement)
+            self.sendValuesToView.emit(obj_count)
+            data = self.make_payload(obj_count)
             self.sendValuesToDataIter.emit(data)
 
     @staticmethod
-    def make_payload(objects: int, measurement: float):
+    def make_payload(objects: int):
         data = dict()
         data["line"] = 1
-        data["parts_quantity"] = objects
-        data["area_production"] = measurement
-        data["line_stops"] = False
-        data["stops_quantity"] = []
+        data["obj_quantity"] = objects
         return data
 
 

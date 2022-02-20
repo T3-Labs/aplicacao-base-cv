@@ -10,14 +10,12 @@ from shapely.geometry import LineString
 
 class PostProcess(QThread):
 
-    def __init__(self, videoQueue, inferenceQueue, resultsQueue) -> None:
+    def __init__(self, inferenceQueue, resultsQueue) -> None:
         super().__init__()
-        self.videoQueue = videoQueue
         self.inferenceQueue = inferenceQueue
         self.resultsQueue = resultsQueue
         self.tracker = Tracker(3, 1, 30)
         self.count_objs = 0
-        self.allMeasurement = 0
         self.colors = [
                         (255, 0, 0), (0, 255, 0), (10, 240, 120),
                         (255, 255, 0),(0, 255, 255), (255, 0, 255),
@@ -69,18 +67,12 @@ class PostProcess(QThread):
 
     @staticmethod    
     def centroid(results: list)-> tuple:
-        centers = []
-        measurements = []
-        if results[-1]!="Unknown":
-            for result in results:
-                bbox = result[0]
-                measurement = result[-1][0]
-                centerCoord = (int(bbox[0]+(bbox[2]/2)), int(bbox[1]+(bbox[3]/2)))
-                centers.append(centerCoord)
-                measurements.append(measurement)
-            return centers, measurements
-        else:
-            return []
+        centers = []        
+        for result in results:
+            bbox = result[0]
+            centerCoord = (int(bbox[0]+(bbox[2]/2)), int(bbox[1]+(bbox[3]/2)))
+            centers.append(centerCoord)
+        return centers
 
 
     @staticmethod
@@ -131,11 +123,7 @@ class PostProcess(QThread):
                     x1, y1 = x_min_y_min[0]
                     x2, y2 = x_max_y_max[0]
                     cv2.line(frame, (int(x1), int(y1)), (int(x2), int(y2)), colors[clr], 2)
-                plateWidth = tracker.tracks[i].measurement[0]/10
-                plateHeight = tracker.tracks[i].measurement[1]/10
-                plateWidth = float("{:.2f}".format(plateWidth))
-                plateHeight = float("{:.2f}".format(plateHeight))
-                cv2.putText(frame, f"{plateWidth}cm X {plateHeight}cm", (int(x1), int(y1)), 0, 1 / 2.5, [110, 255, 10], thickness=1, lineType=cv2.LINE_AA)
+                
                 if tracker.tracks[i].counted == False:
                     matrix_1 = tracker.tracks[i].trace[0][0].tolist()
                     matrix_2 = tracker.tracks[i].trace[-1][-1].tolist()
@@ -146,7 +134,6 @@ class PostProcess(QThread):
                     if line1.intersects(line2):
                         self.count_objs+=1
                         tracker.tracks[i].counted = True
-                        self.allMeasurement+= (tracker.tracks[i].measurement[0]/10)*(tracker.tracks[i].measurement[1]/10)
                         cv2.line(frame, (W//2, 0), (W //2, H), (0, 0, 255), 2)
                     else:
                         continue
@@ -158,18 +145,15 @@ class PostProcess(QThread):
     def run(self):
         frameCounter = 0
         while not self.isInterruptionRequested():
-            if self.videoQueue.get_size()>0:
-                frame = self.videoQueue.cat()
-                results = self.inferenceQueue.cat()
-                centroIDS, measurements = self.centroid(results)
+            if self.inferenceQueue.get_size()>0:
+                results, frame = self.inferenceQueue.cat()
+                centroIDS = self.centroid(results)
                 img = frame.copy()
-                H, W = img.shape[:2]
                 if centroIDS:
                     if frameCounter % 2 == 0:
-                        self.tracker.Update(centroIDS, measurements)
+                        self.tracker.Update(centroIDS)
                 img = self.tracker_obj(frame, self.tracker, self.colors)
-                cv2.putText(img, f"{self.count_objs}", (W-40, H - H +40), 0, 2 / 3, [0, 255, 10], thickness=1, lineType=cv2.LINE_AA)
-                self.resultsQueue.collect([img, self.count_objs, self.allMeasurement])
+                self.resultsQueue.collect([img, self.count_objs])
             
 
     def __del__(self):

@@ -9,7 +9,7 @@ class Track(object):
         None
     """
 
-    def __init__(self, prediction, trackIdCount, measurement):
+    def __init__(self, prediction, trackIdCount):
         """Initialize variables used by Track class
         Args:
             prediction: predicted centroids of object to be tracked
@@ -23,7 +23,6 @@ class Track(object):
         self.trace = []  # trace path
         self.counted = False
         self.skipped_frames = 0
-        self.measurement = measurement
 
 
 class Tracker(object):
@@ -50,7 +49,7 @@ class Tracker(object):
         self.trackIdCount = trackIdCount
         self.max_frames_to_skip = 5
 
-    def Update(self, detections, measurements):
+    def Update(self, detections):
         """Update tracks vector using following steps:
             - Create tracks if no tracks vector found
             - Calculate cost using sum of square distance
@@ -71,7 +70,7 @@ class Tracker(object):
         # Create tracks if no tracks vector found
         if (len(self.tracks) == 0):
             for i in range(len(detections)):
-                track = Track(detections[i], self.trackIdCount, measurements[i])
+                track = Track(detections[i], self.trackIdCount)
                 self.trackIdCount += 1
                 self.tracks.append(track)
 
@@ -139,7 +138,7 @@ class Tracker(object):
         if(len(un_assigned_detects) != 0):
             for i in range(len(un_assigned_detects)):
                 track = Track(detections[un_assigned_detects[i]],
-                              self.trackIdCount, measurements[un_assigned_detects[i]])
+                              self.trackIdCount)
                 self.trackIdCount += 1
                 self.tracks.append(track)
 

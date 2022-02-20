@@ -8,21 +8,15 @@ import os
 from pathlib import Path
 from time import time
 
-from models.foreground_extractor import StaticForegroundExtractor
 
 class Detector(QThread):
 
     def __init__(self, frameQueue, resultQueue) -> None:
         super().__init__()
         load_dotenv(find_dotenv())
-        MODEL_PATH = os.getenv("MODEL_PATH")
-        weights = MODEL_PATH.split(".")[0]+"_last.weights"
-        weights = Path.cwd().joinpath('data', 'models', weights)
-        cfg = Path.cwd().joinpath('data', 'models', MODEL_PATH)
-        weights = Path.cwd().joinpath('data', 'models', "yolo_new.weights")
-        cfg = Path.cwd().joinpath('data', 'models', 'yolo-new.cfg')
-        labels = Path.cwd().joinpath('data', 'models', 'labels.names')
-        self.labels = self._load_labels(labels)
+        weights = os.getenv("WEIGHTS_PATH")
+        cfg = os.getenv("CFG_PATH")
+        self.labels = self._load_labels(os.getenv("LABELS_PATH"))
         self.model = cv2.dnn.readNetFromDarknet(str(cfg), str(weights))
         self.model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
         self.model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
@@ -31,11 +25,11 @@ class Detector(QThread):
         self.nms_threshold = 0.4
         self.frameQueue = frameQueue
         self.resultQueue = resultQueue
-        self.fge = StaticForegroundExtractor()
 
     @staticmethod
-    def _load_labels(labels_path: Path):
-        with labels_path.open() as labels_file:
+    def _load_labels(labels_path: str):
+
+        with open(labels_path,'r') as labels_file:
             labels = labels_file.read()
         labels = labels.split("\n")
         labels = list(map(lambda x: x.strip(), labels))
@@ -82,15 +76,11 @@ class Detector(QThread):
         indices = cv2.dnn.NMSBoxes(boxes, confidences, self.conf_threshold,
                                    self.nms_threshold)
                                    
-        fg = self.fge.extract_foreground(inputs)
         if len(indices) > 0:
             for i in indices:
                 box = boxes[i]
-                measurement = self.fge.get_measurements_from_roi(fg, [np.int_(box)])
-                detections.append((box, confidences[i], self.labels[0], measurement))
-        if detections:
-            return detections
-        return [0, 0, 0, 0], 0, self.labels[-1], (0,0)
+                detections.append((box, confidences[i], self.labels[0]))
+        return detections, inputs
 
 
     def run(self):

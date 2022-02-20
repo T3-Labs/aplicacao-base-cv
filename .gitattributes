@@ -1,0 +1,1 @@
+settings/yolov3-tiny.cfg filter=lfs diff=lfs merge=lfs -text

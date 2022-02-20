@@ -89,9 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graphicsView.fitInView(pixmapItem, Qt.KeepAspectRatio)
     
     def refresh_text(self, value: list):
-        self.countWidget.setText(f"Contagem:\n\n {value[0]}")
-        formatedValue = float("{:.2f}".format(value[1]/1000))
-        self.areaWidget.setText(f"Área Total Produzida:\n\n{formatedValue} m²")
+        self.countWidget.setText(f"Contagem:\n\n {value}")
 
 if __name__ == "__main__":
 
