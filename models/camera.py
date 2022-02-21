@@ -27,9 +27,7 @@ class Camera(QThread):
             cap = self.video(self.video_path)
         else:
             cap = self.video(0)
-        
-        
-
+            
         fps = cap.get(cv2.CAP_PROP_FPS)
         while(cap.isOpened() and self.isInterruptionRequested() is not True):
             start = time.time()
