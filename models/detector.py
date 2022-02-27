@@ -89,6 +89,7 @@ class Detector(QThread):
         while not self.isInterruptionRequested():
             if not self.frameQueue.empty():
                 item = self.frameQueue.get()
+                results = []
                 results = self.inference(item)
                 self.sendInferences.emit([results, item])    
             else:
