@@ -5,6 +5,7 @@ from models.detector import Detector
 from models.camera import Camera
 from models.postprocess import PostProcess
 from PyQt5.QtCore import QObject
+from PyQt5 import QtCore
 from dotenv import load_dotenv, find_dotenv
 import os
 
@@ -28,8 +29,8 @@ class Manager(QObject):
         self.inference = Detector()
         self.postprocess = PostProcess()
 
-        self.cam.sendFrame.connect(self.inference.receiveFrame)
-        self.inference.sendInferences.connect(self.postprocess.receiveInferences)
+        self.cam.sendFrame.connect(self.inference.receiveFrame, QtCore.Qt.DirectConnection)
+        self.inference.sendInferences.connect(self.postprocess.receiveInferences, QtCore.Qt.DirectConnection)
         
 
 
