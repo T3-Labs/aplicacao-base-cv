@@ -20,7 +20,8 @@ class MainController(QObject):
         
 
 
-
-        self.window.showFullScreen()
+        self.window.showMaximized()
         #self.resultshandler.start()
         self.manager.start()
+
+
