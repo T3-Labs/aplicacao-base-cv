@@ -1,10 +1,11 @@
-from controllers.main_controller import MainController
-import PyQt5
-import sys
-from PyQt5.QtCore import QLibraryInfo
 import os
+import sys
 
-    
+import PyQt5
+from PyQt5.QtCore import QLibraryInfo
+
+from controllers.main_controller import MainController
+
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
     QLibraryInfo.PluginsPath
 )
